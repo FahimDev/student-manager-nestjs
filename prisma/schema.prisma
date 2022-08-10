@@ -16,7 +16,8 @@ model Student {
   email   String @unique
   phone   String
   address String
-  program String
+  program Program @relation(fields: [program_id], references: [id])
+  program_id Int 
 }
 
 model User {
@@ -40,4 +41,18 @@ model Admin {
 enum Role {
   ADMIN
   STUDENT
+}
+
+model Program {
+  id Int @id @default(autoincrement())
+  title String 
+  description String @db.LongText
+  type ProgramType @default(ARTS)
+  student Student[]
+}
+
+enum ProgramType{
+  SCIENCE
+  COMMERCE
+  ARTS
 }

@@ -11,10 +11,33 @@ datasource db {
 }
 
 model Student {
+  id      Int    @id @default(autoincrement())
+  name    String
+  email   String @unique
+  phone   String
+  address String
+  program String
+}
+
+model User {
+  id        Int    @id @default(autoincrement())
+  username  String
+  password  String
+  token_key String
+  role Role @default(STUDENT)
+  admin Admin?
+}
+
+model Admin {
   id Int @id @default(autoincrement())
   name String
   email String @unique
-  phone String
-  address String
-  program String
+  phone String 
+  user User @relation(fields: [user_id], references: [id])
+  user_id Int @unique
+}
+
+enum Role {
+  ADMIN
+  STUDENT
 }

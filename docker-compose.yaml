@@ -1,0 +1,26 @@
+version: '3.9'
+
+volumes:
+  student_manager_db_volume:
+
+services:
+  web-dev:
+    build:
+      context: .
+      dockerfile: docker/web/Dockerfile-Dev
+    volumes:
+      - type: bind
+        source: "."
+        target: /usr/app
+    ports:
+      - '3000:3000'
+    depends_on:
+      - db
+  db:
+    build:
+      context: .
+      dockerfile: docker/db/Dockerfile
+    ports:
+      - '3306:3306'
+    volumes:
+      - student_manager_db_volume:/var/lib/mysql

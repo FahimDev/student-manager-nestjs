@@ -1,7 +1,8 @@
 import { Controller, Delete, Get, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
 import { Request, Response } from 'express';
+import { ApiTags } from '@nestjs/swagger';
 
-
+@ApiTags('Student')
 @Controller('students')
 export class StudentsController {
 

@@ -6,26 +6,19 @@ import { UpdateStudentDto } from './dto/update-student.dto';
 
 @Injectable()
 export class StudentsService {
-  constructor(private dbService: DBService){}
+  constructor(private dbService: DBService) {}
 
-  async create(student: CreateStudentDto) {
+  create(createStudentDto: CreateStudentDto) {
     return this.dbService.student.create({
-      data: {
-        address: student.address,
-        email: student.email,
-        name: student.name,
-        phone: student.phone,
-        program_id: student.program_id,
-      }
+      data: createStudentDto,
     });
   }
 
-  async findAll() {
-    const students: Student[] = await this.dbService.student.findMany();
-    return students;
+  findAll() {
+    return this.dbService.student.findMany();
   }
 
-  async findOne(id: number) {
+  findOne(id: number) {
     return this.dbService.student.findFirst({
       where: {
         id: id,
@@ -34,10 +27,19 @@ export class StudentsService {
   }
 
   update(id: number, updateStudentDto: UpdateStudentDto) {
-    return `This action updates a #${id} student`;
+    return this.dbService.student.update({
+      where: {
+        id: id,
+      },
+      data: updateStudentDto,
+    });
   }
 
   remove(id: number) {
-    return `This action removes a #${id} student`;
+    return this.dbService.student.delete({
+      where: {
+        id: id,
+      },
+    });
   }
 }

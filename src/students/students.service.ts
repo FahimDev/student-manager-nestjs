@@ -4,21 +4,18 @@ import { DBService } from 'src/database/db.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
 
-
 @Injectable()
 export class StudentsService {
-
   constructor(private dbService: DBService){}
 
   async create(student: CreateStudentDto) {
-    
     return this.dbService.student.create({
       data: {
-        address:student.address,
+        address: student.address,
         email: student.email,
         name: student.name,
-        phone:student.phone,
-        program_id: student.program_id
+        phone: student.phone,
+        program_id: student.program_id,
       }
     });
   }

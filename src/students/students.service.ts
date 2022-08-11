@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
+import { Prisma, Student } from '@prisma/client';
 import { DBService } from 'src/database/db.service';
-import { Student } from '@prisma/client';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
 
@@ -10,8 +10,17 @@ export class StudentsService {
 
   constructor(private dbService: DBService){}
 
-  create(createStudentDto: CreateStudentDto) {
-    return 'This action adds a new student';
+  async create(student: CreateStudentDto) {
+    
+    return this.dbService.student.create({
+      data: {
+        address:student.address,
+        email: student.email,
+        name: student.name,
+        phone:student.phone,
+        program_id: student.program_id
+      }
+    });
   }
 
   async findAll() {

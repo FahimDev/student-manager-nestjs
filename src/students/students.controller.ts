@@ -10,8 +10,8 @@ export class StudentsController {
   constructor(private readonly studentsService: StudentsService) {}
 
   @Post()
-  create(@Body() createStudentDto: CreateStudentDto) {
-    return this.studentsService.create(createStudentDto);
+  create(@Body() student: CreateStudentDto) {
+    return this.studentsService.create(student);
   }
 
   @Get()

@@ -4,27 +4,27 @@ import { Student } from '@prisma/client';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
 
-const db = new DBService();
 
 @Injectable()
 export class StudentsService {
+
+  constructor(private dbService: DBService){}
 
   create(createStudentDto: CreateStudentDto) {
     return 'This action adds a new student';
   }
 
   async findAll() {
-    const students: Student[] = await db.student.findMany();
+    const students: Student[] = await this.dbService.student.findMany();
     return students;
   }
 
   async findOne(id: number) {
-    const student: Student = await db.student.findFirst({
+    return this.dbService.student.findFirst({
       where: {
         id: id,
       },
     });
-    return student;
   }
 
   update(id: number, updateStudentDto: UpdateStudentDto) {

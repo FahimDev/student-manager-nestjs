@@ -2,10 +2,12 @@ import { Controller, Delete, Get, Param, ParseIntPipe, Patch, Post } from '@nest
 import { Request, Response } from 'express';
 import { StudentsService } from 'src/students/services/students/students.service';
 
+import { ApiTags } from '@nestjs/swagger';
+
+@ApiTags('Student')
 @Controller('students')
 export class StudentsController {
-    
-    constructor(private studentService: StudentsService){}
+  constructor(private studentService: StudentsService) {}
 
     // @Post()
     // create(){

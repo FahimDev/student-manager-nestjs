@@ -1,9 +1,11 @@
 import { Controller, Delete, Get, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
 import { Request, Response } from 'express';
-
+import { StudentsService } from 'src/students/services/students/students.service';
 
 @Controller('students')
 export class StudentsController {
+    
+    constructor(private studentService: StudentsService){}
 
     // @Post()
     // create(){
@@ -12,7 +14,7 @@ export class StudentsController {
 
     @Get('all')
     findAll(){
-        return 0;
+        return this.studentService.findAll();
     }
 
     @Get(':id')

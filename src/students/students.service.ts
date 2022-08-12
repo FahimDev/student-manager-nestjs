@@ -1,14 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma, Student } from '@prisma/client';
+import { Student } from '@prisma/client';
 import { DBService } from 'src/database/db.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
-
-interface Iresponse {
-  status: string;
-  messages: string[];
-  data?: Student;
-}
 
 @Injectable()
 export class StudentsService {
@@ -16,7 +10,7 @@ export class StudentsService {
 
   async create(createStudentDto: CreateStudentDto) {
     let data: Student = null;
-    let messages: string[] = [];
+    const messages: string[] = [];
     let status: string = "";
 
     try {

@@ -1,5 +1,5 @@
 interface Iresponse {
-    status: string;
-    messages: string[];
-    data?: unknown;
-  }
+  status: string;
+  messages: string[];
+  data?: unknown;
+}

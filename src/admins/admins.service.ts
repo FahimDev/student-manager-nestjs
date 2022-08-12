@@ -55,29 +55,11 @@ export class AdminsService {
   }
 
   async findOne(id: number) {
-    let data: Admin = null;
-    let messages: string[] = [];
-    let status: string = '';
-    try {
-      data = await this.dbService.admin.findFirst({
+      return this.dbService.admin.findFirst({
         where: {
           id: id,
         },
       });
-      messages.push('Admin record by ID found successfully');
-      status = 'success';
-    } catch (error) {
-      messages.push('Admin record cannot be found by its ID');
-      status = 'failed';
-    } finally {
-      // Following common standard for API response.
-      let response: Iresponse = {
-        status: status,
-        messages: messages,
-      };
-      response = data ? { ...response, data: data } : response;
-      return response;
-    }
   }
 
   async update(id: number, updateAdminDto: UpdateAdminDto) {

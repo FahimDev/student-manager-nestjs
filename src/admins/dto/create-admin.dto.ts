@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Role } from '@prisma/client';
 
 export class CreateAdminDto {
   @ApiProperty()
@@ -12,5 +13,7 @@ export class CreateAdminDto {
   @ApiProperty()
   password: string;
   @ApiProperty()
-  role: number;
+  role: Role;
+  @ApiProperty()
+  designation: string;
 }

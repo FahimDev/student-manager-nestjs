@@ -1,45 +1,108 @@
 import { Injectable } from '@nestjs/common';
 import { CreateAdminDto } from './dto/create-admin.dto';
 import { UpdateAdminDto } from './dto/update-admin.dto';
-import { ApiTags } from '@nestjs/swagger';
 import { DBService } from 'src/database/db.service';
+import { Admin } from '@prisma/client';
 
-
-@ApiTags('Students')
 @Injectable()
 export class AdminsService {
   constructor(private dbService: DBService){}
 
-  create(createAdminDto: CreateAdminDto) {
-    // return this.dbService.admin.create({
-    //   data:{
-    //     name: createAdminDto.name,
-    //     email: createAdminDto.email,
-    //     phone: createAdminDto.phone,
-    //     user_id: {
-    //       create: {
-    //           username: createAdminDto.username,
-    //           password: createAdminDto.password,
-    //           role: createAdminDto.role,
-    //       },
-    //     },
-    //   },
-    // });
+  async create(createAdminDto: CreateAdminDto) {
+    let data: Admin = null;
+    let messages: string[] = [];
+    let status: string = "";
+    try {
+      data = await this.dbService.admin.create({
+        data:{
+          name: createAdminDto.name,
+          phone: createAdminDto.phone,
+          designation: createAdminDto.designation,
+          user: {
+            create: {
+                username: createAdminDto.username,
+                password: createAdminDto.password,
+                email: createAdminDto.email,
+                role: createAdminDto.role,
+            },
+          },
+        },
+      });
+      messages.push('Admin enrolled successfully');
+      status = 'success';
+    } catch (error) {
+      messages.push('Admin enrollment was not successful!');
+      status = 'failed';
+    } finally {
+      let response: Iresponse = {
+        status: status,
+        messages: messages,
+      };
+      response = data ? { ...response, data: data } : response;
+      return response;
+    }
+  
   }
 
   findAll() {
-    return `This action returns all admins`;
+    return this.dbService.admin.findMany();
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} admin`;
+    return this.dbService.admin.findFirst({
+      where: {
+        id: id,
+      },
+    });
   }
 
-  update(id: number, updateAdminDto: UpdateAdminDto) {
-    return `This action updates a #${id} admin`;
+  async update(id: number, updateAdminDto: UpdateAdminDto) {
+    let data: Admin = null;
+    let messages: string[] = [];
+    let status: string = "";
+    try {
+      data = await this.dbService.admin.update({
+        where: {
+          id: id,
+        },
+        data: updateAdminDto,
+      });
+      messages.push('Admin record updated successfully');
+      status = 'success';
+    } catch (error) {
+      messages.push('Admin record cannot be updated or found');
+      status = 'failed';
+    } finally {
+      let response: Iresponse = {
+        status: status,
+        messages: messages,
+      };
+      response = data ? { ...response, data: data } : response;
+      return response;
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} admin`;
+  async remove(id: number) {
+    let data: Admin = null;
+    let messages: string[] = [];
+    let status: string = "";
+    try {
+      data = await this.dbService.admin.delete({
+        where: {
+          id: id,
+        },
+      });
+      messages.push('Admin record successfully deleted');
+      status = 'success';
+    } catch (error) {
+      messages.push('Admin record cannot be deleted or found.');
+      status = 'failed';
+    } finally {
+      let response: Iresponse = {
+      status: status,
+      messages: messages,
+      };
+      return response;
+    }
   }
 }

@@ -1,4 +1,3 @@
-import { Program } from "@prisma/client";
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateStudentDto {

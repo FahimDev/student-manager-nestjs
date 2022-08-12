@@ -33,4 +33,9 @@ export class ProgramsController {
   remove(@Param('id') id: string) {
     return this.programsService.remove(+id);
   }
+
+  @Get(':id/students')
+  findStudents(@Param('id') id: string) {
+    return this.programsService.findStudents(+id);
+  }
 }

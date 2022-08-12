@@ -100,4 +100,11 @@ export class ProgramsService {
       return response;
     }
   }
+
+  findStudents(id: number) {
+    return this.dbService.program.findMany({
+      where: { id: id },
+      include: { student: true },
+    });
+  }
 }

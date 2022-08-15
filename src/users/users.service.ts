@@ -31,7 +31,6 @@ export class UsersService {
             username: username,
           },
         });
-        console.log(user);
         const isMatch = await bcrypt.compare(updateUserDto.oldPassword, user.password);    // Authenticating Password.
         console.log(isMatch);
         if (isMatch) {

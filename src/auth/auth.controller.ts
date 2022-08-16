@@ -9,13 +9,17 @@ import {
 } from '@nestjs/common';
 import { Response as Res } from 'express';
 import { LocalAuthGuard } from './local-auth.guard';
-import { ApiHeader, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiHeader, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto/auth-cred.dto';
 import { JwtAuthGuard } from './jwt-auth.guard';
 
 @ApiTags('Auth')
-@Controller()
+@ApiBearerAuth()
+@Controller({
+  path: 'auth',
+  version: '1'
+})
 export class AuthController {
   constructor(private authService: AuthService) {}
 
@@ -24,12 +28,8 @@ export class AuthController {
   async login(@Body() req: AuthDto, @Response() res: Res) {
     return this.authService.login(req, res);
   }
-
-  @ApiHeader({
-    name: 'Authorization',
-  })
   @UseGuards(JwtAuthGuard)
-  @Get('try')
+  @Get('/try')
   try(@Request() req) {
     return 'Hello';
   }

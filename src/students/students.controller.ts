@@ -16,7 +16,10 @@ import { AuthGuard } from '@nestjs/passport';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @ApiTags('Students')
-@Controller('students')
+@Controller({
+  path: 'students',
+  version: '1'
+})
 export class StudentsController {
   constructor(private readonly studentsService: StudentsService) {}
 

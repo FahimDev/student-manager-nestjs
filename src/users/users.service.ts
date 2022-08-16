@@ -25,47 +25,61 @@ export class UsersService {
     let data: User = null;
     let messages: string[] = [];
     let status: string = '';
-      try {
-        const user = await this.dbService.user.findFirst({
-          where: {
-            username: username,
-          },
-        });
-        const isMatch = await bcrypt.compare(updateUserDto.oldPassword, user.password);    // Authenticating Password.
-        console.log(isMatch);
-        if (isMatch) {
-          // Password encryption Ref: https://docs.nestjs.com/security/encryption-and-hashing
-          const salt = await bcrypt.genSalt();    // Generating Salt for encrypting Password.
-          const newHashedPassword = await bcrypt.hash(updateUserDto.newPassword, salt);    // Plain text password hashed.
-          data = await this.dbService.user.update({
-            where: {
-              id: user.id,
-            },
-            data: {
-              username: user.username,
-              password: newHashedPassword,
-              role: user.role,
-              email: user.email,
-            }, 
-          });
-          messages.push('User password updated successfully');
-          status = 'success';
-        } else {
-          messages.push('Sorry, curent password is wrong!');
-          status = 'failed';
-        }
-      } catch (error) {
-        messages.push('Password was not updated!');
+    let response: Iresponse = null;
+    try {
+      const user = await this.dbService.user.findFirst({
+        where: {
+          username: username,
+        },
+      });
+      data = await this.authenticateUser(user, updateUserDto);
+      if (data) {
+        messages.push('User password updated successfully');
+        status = 'success';
+      } else {
+        messages.push('Sorry, curent password is wrong!');
         status = 'failed';
-      } finally {
-        // Following common standard for API response.
-        let response: Iresponse = {
-          status: status,
-          messages: messages,
-        };
-        response = data ? { ...response, data: data } : response;
-        return response;
-      } 
+      }
+    } catch (error) {
+      messages.push('Password was not updated!');
+      status = 'failed';
+    } finally {
+      // Following common standard for API response.
+      response = {
+        status: status,
+        messages: messages,
+      };
+      response = data ? { ...response, data: data } : response;
+    }
+    return response;
+  }
+
+  async authenticateUser(user: User, updateUserDto: UpdateUserDto) {
+    let data: User = null;
+    const isMatch = await bcrypt.compare(
+      updateUserDto.oldPassword,
+      user.password,
+    ); // Authenticating Password.
+    if (isMatch) {
+      // Password encryption Ref: https://docs.nestjs.com/security/encryption-and-hashing
+      const salt = await bcrypt.genSalt(); // Generating Salt for encrypting Password.
+      const newHashedPassword = await bcrypt.hash(
+        updateUserDto.newPassword,
+        salt,
+      ); // Plain text password hashed.
+      data = await this.dbService.user.update({
+        where: {
+          id: user.id,
+        },
+        data: {
+          username: user.username,
+          password: newHashedPassword,
+          role: user.role,
+          email: user.email,
+        },
+      });
+    }
+    return data;
   }
 
   remove(id: number) {

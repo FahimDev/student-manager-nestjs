@@ -22,38 +22,47 @@ export class AuthService {
 
   async login(user: any, res: any) {
     let data: any = null;
-    const messages: string[] = [];
-    let status: string = '';
+    let response: Iresponse;
 
     const userInfo = await this.usersService.findOne(user.username); // Getting User info from User Module
 
     if (userInfo) {
-      status = 'success';
-      messages.push('Login Successful!');
       data = { username: userInfo.username, role: userInfo.role };
+      response = await this.manageResponse(
+        'Login Successful!',
+        'success',
+        data,
+      );
     } else {
-      status = 'failed';
-      messages.push('User not found!');
+      response = await this.manageResponse('User not found!', 'failed');
     }
-
-    const payload = {
-      sub: userInfo.id,
-      username: userInfo.username,
-      email: userInfo.email,
-      role: userInfo.role,
-    }; // Preparing API payload packet for generating Digital Signature
-
-    let response: Iresponse = {
-      status: status,
-      messages: messages,
-      data: data,
-    }; 
-
+    const digitalSignature = await this.generateSignature(userInfo);
     return res
       .set({
-        'access-token': this.jwtService.sign(payload),
+        'access-token': digitalSignature,
         'token-type': 'Bearer',
-      })  //  Returning a Signed API Token in herder
-      .json(response);  // Body content included
+      }) //  Returning a Signed API Token in herder
+      .json(response); // Body content included
+  }
+
+  private async generateSignature(payloadContent: any) {
+    const payload = {
+      sub: payloadContent.id,
+      username: payloadContent.username,
+      email: payloadContent.email,
+      role: payloadContent.role,
+    }; // Preparing API payload packet for generating Digital Signature
+    return this.jwtService.sign(payload);
+  }
+
+  async manageResponse(status: string, message: string, data?: any) {
+    let messages: string[] = [];
+    let response: Iresponse = null;
+    messages.push(message);
+    response = {
+      status: status,
+      messages: messages,
+    };
+    return data ? { ...response, data: data } : response;
   }
 }

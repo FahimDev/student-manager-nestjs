@@ -23,8 +23,6 @@ export class UsersService {
 
   async updatePassword(username: string, updateUserDto: UpdateUserDto) {
     let data: User = null;
-    let messages: string[] = [];
-    let status: string = '';
     let response: Iresponse = null;
     try {
       const user = await this.dbService.user.findFirst({
@@ -34,24 +32,24 @@ export class UsersService {
       });
       data = await this.authenticateUser(user, updateUserDto);
       if (data) {
-        messages.push('User password updated successfully');
-        status = 'success';
+        response = await this.manageResponse(
+          'User password updated successfully!',
+          'success',
+        );
       } else {
-        messages.push('Sorry, curent password is wrong!');
-        status = 'failed';
+        response = await this.manageResponse(
+          'Sorry, curent password is wrong!',
+          'failed',
+        );
       }
     } catch (error) {
-      messages.push('Password was not updated!');
-      status = 'failed';
+      response = await this.manageResponse(
+        'Password was not updated!',
+        'failed',
+      );
     } finally {
-      // Following common standard for API response.
-      response = {
-        status: status,
-        messages: messages,
-      };
-      response = data ? { ...response, data: data } : response;
+      return response;
     }
-    return response;
   }
 
   async authenticateUser(user: User, updateUserDto: UpdateUserDto) {
@@ -80,6 +78,18 @@ export class UsersService {
       });
     }
     return data;
+  }
+
+  async manageResponse(status: string, message: string, data?: any) {
+    // Following common standard for API response.
+    let messages: string[] = [];
+    let response: Iresponse = null;
+    messages.push(message);
+    response = {
+      status: status,
+      messages: messages,
+    };
+    return data ? { ...response, data: data } : response;
   }
 
   remove(id: number) {

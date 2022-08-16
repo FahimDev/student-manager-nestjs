@@ -111,7 +111,7 @@ export class AdminsService {
       messages.push('Admin record successfully deleted');
       status = 'success';
     } catch (error) {
-      messages.push(`Admin record cannot be deleted or found. #${error}`);
+      messages.push(`Admin record cannot be deleted or found.`);
       status = 'failed';
     } finally {
       // Following common standard for API response.

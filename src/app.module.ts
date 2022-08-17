@@ -10,11 +10,20 @@ import { AuthService } from './auth/auth.service';
 import { UsersService } from './users/users.service';
 import { DBService } from './database/db.service';
 import { JwtService } from '@nestjs/jwt';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [StudentsModule, AdminsModule, AuthModule, UsersModule, ProgramsModule],
+  imports: [
+    StudentsModule,
+    AdminsModule,
+    AuthModule,
+    UsersModule,
+    ProgramsModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+  ],
   controllers: [AppController],
   providers: [AppService, AuthService, UsersService, DBService, JwtService],
 })
-
 export class AppModule {}

@@ -6,7 +6,7 @@
 
 */
 -- AlterTable
-ALTER TABLE `student` DROP COLUMN `program`,
+ALTER TABLE `Student` DROP COLUMN `program`,
     ADD COLUMN `program_id` INTEGER NOT NULL;
 
 -- CreateTable

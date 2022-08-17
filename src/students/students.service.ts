@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Student } from '@prisma/client';
-import { DBService } from 'src/database/db.service';
+import { DBService } from '../database/db.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
 
@@ -11,7 +11,7 @@ export class StudentsService {
   async create(createStudentDto: CreateStudentDto) {
     let data: Student = null;
     const messages: string[] = [];
-    let status: string = "";
+    let status: string = '';
 
     try {
       data = await this.dbService.student.create({
@@ -20,6 +20,7 @@ export class StudentsService {
       messages.push('Student record successfully created');
       status = 'success';
     } catch (error) {
+      console.error(error);
       messages.push('Student record cannot be created');
       status = 'failed';
     } finally {
@@ -49,7 +50,7 @@ export class StudentsService {
   async update(id: number, updateStudentDto: UpdateStudentDto) {
     let data: Student = null;
     let messages: string[] = [];
-    let status: string = "";
+    let status: string = '';
 
     try {
       data = await this.dbService.student.update({
@@ -78,7 +79,7 @@ export class StudentsService {
   async remove(id: number) {
     let data: Student = null;
     let messages: string[] = [];
-    let status: string = "";
+    let status: string = '';
 
     try {
       data = await this.dbService.student.delete({

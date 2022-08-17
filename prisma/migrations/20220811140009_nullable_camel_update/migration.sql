@@ -12,19 +12,19 @@
 
 */
 -- DropForeignKey
-ALTER TABLE `admin` DROP FOREIGN KEY `Admin_user_id_fkey`;
+ALTER TABLE `Admin` DROP FOREIGN KEY `Admin_user_id_fkey`;
 
 -- DropIndex
-DROP INDEX `Admin_email_key` ON `admin`;
+DROP INDEX `Admin_email_key` ON `Admin`;
 
 -- AlterTable
-ALTER TABLE `admin` DROP COLUMN `email`,
+ALTER TABLE `Admin` DROP COLUMN `email`,
     DROP COLUMN `user_id`,
     ADD COLUMN `designation` VARCHAR(191) NOT NULL,
     ADD COLUMN `userId` INTEGER NOT NULL;
 
 -- AlterTable
-ALTER TABLE `user` DROP COLUMN `token_key`,
+ALTER TABLE `User` DROP COLUMN `token_key`,
     ADD COLUMN `email` VARCHAR(191) NOT NULL,
     ADD COLUMN `tokenKey` VARCHAR(191) NULL;
 

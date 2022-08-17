@@ -31,6 +31,6 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get('try')
   try(@Request() req) {
-    return 'Hello';
+    return 'Hello BS23';
   }
 }

@@ -33,6 +33,7 @@ describe('StudentsController', () => {
     const response = await controller.create(newStudent);
     expect(response.status).toEqual('success');
     expect(response.data).toBeDefined();
+    expect(response.data).toEqual({ id: expect.any(Number), ...newStudent });
   });
 
   it('should find all students', async () => {

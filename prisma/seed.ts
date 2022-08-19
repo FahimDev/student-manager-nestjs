@@ -1,4 +1,5 @@
-import { PrismaClient, ProgramType } from '@prisma/client';
+import { faker } from '@faker-js/faker';
+import { PrismaClient, ProgramType, Role } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -10,23 +11,26 @@ async function main() {
   await prisma.program.create({
     data: {
       id: 1,
-      title: 'Program 1',
-      description: 'Program 1 description',
+      title: 'Science Program',
+      description: 'Science Program Details',
       type: ProgramType.SCIENCE,
     },
   });
 
-  // Create a new student
-  await prisma.student.create({
-    data: {
-      id: 1,
-      name: 'Student 1',
-      email: 'student1@gmail.com',
-      program_id: 1,
-      phone: '1234567890',
-      address: '123 Main St',
-    },
-  });
+  // Create some new students
+  for (let i = 0; i < 10; i++) {
+    const firstName = faker.name.firstName();
+    const lastName = faker.name.lastName();
+    await prisma.student.create({
+      data: {
+        name: faker.name.fullName({ firstName, lastName }),
+        email: faker.internet.email(firstName, lastName),
+        program_id: 1,
+        phone: faker.phone.number(),
+        address: faker.address.streetAddress(),
+      },
+    });
+  }
 }
 
 main()

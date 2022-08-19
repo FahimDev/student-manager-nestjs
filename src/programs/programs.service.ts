@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { Program } from '@prisma/client';
-import { DBService } from 'src/database/db.service';
+import { Program, Student } from '@prisma/client';
+import { response } from 'express';
+import { DBService } from '../database/db.service';
 import { CreateProgramDto } from './dto/create-program.dto';
 import { UpdateProgramDto } from './dto/update-program.dto';
 
@@ -34,16 +35,44 @@ export class ProgramsService {
     }
   }
 
-  findAll() {
-    return this.dbService.program.findMany();
+  async findAll() {
+    let programs = await this.dbService.program.findMany();
+    let response: Iresponse = {
+      status: 'success',
+      messages: ['Program record(s) successfully found'],
+      data: programs,
+    };
+    return response;
   }
 
-  findOne(id: number) {
-    return this.dbService.student.findFirst({
-      where: {
-        id: id,
-      },
-    });
+  async findOne(id: number) {
+    let data: Program = null;
+    const messages: string[] = [];
+    let status: string = '';
+
+    try {
+      data = await this.dbService.program.findUniqueOrThrow({
+        where: {
+          id: id,
+        },
+      });
+
+      messages.push("Requested student's record successfully found");
+      status = 'success';
+    } catch (error) {
+
+      messages.push("Requested program's record cannot be found");
+      status = 'failed';
+    } finally {
+
+      let response: Iresponse = {
+        status: status,
+        messages: messages,
+      };
+
+      response = data ? { ...response, data: data } : response;
+      return response;
+    }
   }
 
   async update(id: number, updateProgramDto: UpdateProgramDto) {
@@ -76,12 +105,11 @@ export class ProgramsService {
   }
 
   async remove(id: number) {
-    let data: Program = null;
     let messages: string[] = [];
     let status: string = '';
 
     try {
-      data = await this.dbService.program.delete({
+      await this.dbService.program.delete({
         where: {
           id: id,
         },
@@ -101,10 +129,25 @@ export class ProgramsService {
     }
   }
 
-  findStudents(id: number) {
-    return this.dbService.program.findMany({
+  async findStudents(id: number) {
+    let data: any = null;
+    let messages: string[] = [];
+    let status: string = '';
+
+    data = await this.dbService.program.findMany({
       where: { id: id },
       include: { student: true },
     });
+
+    status = 'success';
+    messages.push('Program\'s student record(s) successfully found')
+
+    let response: Iresponse = {
+      status: status,
+      messages: messages,
+      data: data
+    };
+
+    return response;
   }
 }

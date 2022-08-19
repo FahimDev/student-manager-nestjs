@@ -3,6 +3,8 @@ import { StudentsService } from './students.service';
 import { DBService } from '../database/db.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
+import { faker } from '@faker-js/faker';
+import { Student } from '@prisma/client';
 
 describe('StudentsService', () => {
   let service: StudentsService;
@@ -54,45 +56,51 @@ describe('StudentsService', () => {
     expect(service).toBeDefined();
   });
 
-  it('should create a new student', async () => {
-    const newStudent = {
-      name: 'newStudent',
-      phone: '0123',
-      address: '123',
-      email: 'newStudent@mail.com',
-      program_id: 1,
-    } as CreateStudentDto;
+  let mockStudentId: number;
+  const mockStudent = {
+    name: faker.name.fullName(),
+    phone: faker.phone.number(),
+    address: faker.address.streetAddress(),
+    email: faker.internet.email(),
+    program_id: 1,
+  } as CreateStudentDto;
 
-    const response = await service.create(newStudent);
+  it('should create a new student', async () => {
+    const response = await service.create(mockStudent);
     expect(response.status).toEqual('success');
     expect(response.data).toBeDefined();
+    expect(response.data).toEqual({ id: expect.any(Number), ...mockStudent });
+
+    mockStudentId = (response.data as Student).id;
   });
 
   it('should find all students', async () => {
     const response = await service.findAll();
     expect(response).toBeDefined();
-    expect(response.length).toBeGreaterThan(0);
+    expect(Array.isArray(response.data)).toBe(true);
+    expect((response.data as Student[]).length).toBeGreaterThan(0);
   });
 
   it('should find one student', async () => {
-    const response = await service.findOne(1);
+    const response = await service.findOne(mockStudentId);
     expect(response).toBeDefined();
-    expect(response.name).toEqual('newStudent');
+    expect((response.data as Student).name).toEqual(mockStudent.name);
   });
 
   it('should update student', async () => {
     const updateStudent = {
-      name: 'updatedStudent',
-      phone: '0123',
-      address: '123',
-      email: 'updatedStudent@mail.com',
+      name: faker.name.fullName(),
+      phone: faker.phone.number(),
+      address: faker.address.city(),
+      email: faker.internet.email(),
     } as UpdateStudentDto;
-    const response = await service.update(1, updateStudent);
+    const response = await service.update(mockStudentId, updateStudent);
     expect(response.status).toEqual('success');
+    expect((response.data as Student).name).toEqual(updateStudent.name);
   });
 
   it('should delete student', async () => {
-    const response = await service.remove(1);
+    const response = await service.remove(mockStudentId);
     expect(response.status).toEqual('success');
   });
 });

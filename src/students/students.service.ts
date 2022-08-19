@@ -35,12 +35,12 @@ export class StudentsService {
     }
   }
 
-  findAll() {
-    return this.dbService.student.findMany();
+  async findAll() {
+    return await this.dbService.student.findMany();
   }
 
-  findOne(id: number) {
-    return this.dbService.student.findFirst({
+  async findOne(id: number) {
+    return await this.dbService.student.findFirst({
       where: {
         id: id,
       },

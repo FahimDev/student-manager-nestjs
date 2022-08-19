@@ -8,8 +8,9 @@ import { UpdateAdminDto } from './dto/update-admin.dto';
 
 describe('AdminsController', () => {
   let controller: AdminsController;
-  let adminId: number;
   let adminInfo: CreateAdminDto;
+  let adminId: number;
+  let updatedAdminName: string;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -24,7 +25,7 @@ describe('AdminsController', () => {
     expect(controller).toBeDefined();
   });
 
-  //https://fakerjs.dev/guide/
+  // https://fakerjs.dev/guide/
   it('should create new admin', async () => {
     const newAdmin = {
       name: faker.name.fullName(),
@@ -44,45 +45,31 @@ describe('AdminsController', () => {
 
   it('should find all admins', async () => {
     const response = await controller.findAll();
-    expect(response).toBeDefined();
     expect(response.status).toEqual('success');
-  });
-
-  it('should find the recently created admin', async () => {
-    const response = await controller.findOne(String(adminId));
     expect(response.data).toBeDefined();
-    expect(response.status).toEqual('success');
-    expect(response.data['name']).toEqual(adminInfo.name);
-
   });
 
-  it('should update the recently created admin info', async () => {
+  it("should find the recently created admin's information", async () => {
+    const response = await controller.findOne(String(adminId));
+    expect(response.status).toEqual('success');
+    expect(response.data).toBeDefined();
+    expect(response.data['name']).toEqual(adminInfo.name);
+  });
+
+  it("should update the recently created admin's information", async () => {
+    updatedAdminName = faker.name.fullName();
     const updateStudent = {
-      name: faker.name.fullName(),
+      name: updatedAdminName,
       phone: faker.random.numeric(11),
       designation: faker.name.jobArea(),
     } as UpdateAdminDto;
     const response = await controller.update(String(adminId), updateStudent);
     expect(response.status).toEqual('success');
-    console.log(`
-    ---------Current Admin information---------
-    ${adminInfo.name}
-    ---------Updated Admin information---------
-    ${updateStudent.name}
-    --------------------END--------------------
-    `);
-    adminInfo.name = updateStudent.name;
-    adminInfo.phone = updateStudent.phone;
-    adminInfo.designation = updateStudent.designation;
   });
 
-  it('should delete recently updated admin', async () => {
+  it('should delete recently created and updated admin', async () => {
     const response = await controller.remove(String(adminId));
     expect(response.status).toEqual('success');
-    console.log(`
-    ---------Admin removed successfully---------
-    ${adminInfo.name}
-    --------------------END---------------------
-    `);
+    expect(response.data['name']).toEqual(updatedAdminName);
   });
 });

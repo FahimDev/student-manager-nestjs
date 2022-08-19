@@ -5,7 +5,10 @@ import { UpdateProgramDto } from './dto/update-program.dto';
 import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('programs')
-@Controller('programs')
+@Controller({
+  path: 'programs',
+  version: '1'
+})
 export class ProgramsController {
   constructor(private readonly programsService: ProgramsService) {}
 

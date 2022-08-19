@@ -11,7 +11,7 @@ export class StudentsService {
   async create(createStudentDto: CreateStudentDto) {
     let data: Student = null;
     const messages: string[] = [];
-    let status: string = '';
+    let status = '';
 
     try {
       data = await this.dbService.student.create({

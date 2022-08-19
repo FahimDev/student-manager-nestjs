@@ -1,0 +1,12 @@
+FROM node:16-alpine
+
+# Create app directory
+WORKDIR /usr/app
+
+COPY package.json .
+
+COPY . .
+
+EXPOSE 3000
+
+CMD ["sh", "-c", "yarn install; yarn prisma migrate; yarn start:dev"]

@@ -70,7 +70,6 @@ describe('StudentsService', () => {
 
   it('should find all students', async () => {
     const response = await service.findAll();
-    console.log(response);
     expect(response).toBeDefined();
     expect(response.length).toBeGreaterThan(0);
   });

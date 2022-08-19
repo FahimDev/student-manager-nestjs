@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateAdminDto } from './dto/create-admin.dto';
 import { UpdateAdminDto } from './dto/update-admin.dto';
-import { DBService } from 'src/database/db.service';
+import { DBService } from '../database/db.service';
 import { Admin } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 

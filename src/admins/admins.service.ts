@@ -16,11 +16,10 @@ export class AdminsService {
       Ref: https://www.prisma.io/docs/guides/performance-and-optimization/prisma-client-transactions-guide
     */
     let data: Admin = null;
-    let messages: string[] = [];
-    let status: string = '';
+    let response: Iresponse = null;
     // Password encryption Ref: https://docs.nestjs.com/security/encryption-and-hashing
-    const salt = await bcrypt.genSalt();    // Generating Salt for encrypting Password.
-    const hashedPassword = await bcrypt.hash(createAdminDto.password, salt);    // Plain text password hashed.
+    const salt = await bcrypt.genSalt(); // Generating Salt for encrypting Password.
+    const hashedPassword = await bcrypt.hash(createAdminDto.password, salt); // Plain text password hashed.
     try {
       data = await this.dbService.admin.create({
         data: {
@@ -38,38 +37,61 @@ export class AdminsService {
           },
         },
       });
-      messages.push(`Admin enrolled successfully.`);
-      status = 'success';
+      response = await this.manageResponse(
+        'success',
+        'Admin enrolled successfully',
+        data,
+      );
     } catch (error) {
-      messages.push('Admin enrollment was not successful!');
-      status = 'failed';
+      response = await this.manageResponse(
+        'failed',
+        'Admin enrollment was not successful!',
+      );
     } finally {
-      // Following common standard for API response.
-      let response: Iresponse = {
-        status: status,
-        messages: messages,
-      };
-      response = data ? { ...response, data: data } : response;
       return response;
     }
   }
 
-  findAll() {
-    return this.dbService.admin.findMany();
+  async findAll() {
+    let response: Iresponse = null;
+    const data = await this.dbService.admin.findMany();
+    if (data) {
+      response = await this.manageResponse(
+        'success',
+        'Admin record(s) successfully found',
+        data,
+      );
+    } else {
+      response = await this.manageResponse('Empty admin record!', 'failed');
+    }
+    return response;
   }
 
   async findOne(id: number) {
-      return this.dbService.admin.findFirst({
-        where: {
-          id: id,
-        },
-      });
+    let response: Iresponse = null;
+    const data = await this.dbService.admin.findFirst({
+      where: {
+        id: id,
+      },
+    });
+    if (data) {
+      response = await this.manageResponse(
+        'success',
+        "Requested admin's record successfully found",
+        data,
+      );
+    } else {
+      response = await this.manageResponse(
+        'failed',
+        "Requested admin's record not found",
+      );
+    }
+    return response;
   }
 
   async update(id: number, updateAdminDto: UpdateAdminDto) {
     let data: Admin = null;
-    let messages: string[] = [];
-    let status: string = '';
+    let response: Iresponse = null;
     /*
     Though Admin has dependency on User Model,
     during the update operation this controller will only 
@@ -80,46 +102,56 @@ export class AdminsService {
         where: {
           id: id,
         },
-        data: updateAdminDto, 
+        data: updateAdminDto,
       });
-      messages.push('Admin record updated successfully');
-      status = 'success';
+      response = await this.manageResponse(
+        'success',
+        'Admin record updated successfully',
+        data,
+      );
     } catch (error) {
-      messages.push('Admin record cannot be updated or found!');
-      status = 'failed';
+      response = await this.manageResponse(
+        'failed',
+        'Admin record cannot be updated or found!',
+      );
     } finally {
-      // Following common standard for API response.
-      let response: Iresponse = {
-        status: status,
-        messages: messages,
-      };
-      response = data ? { ...response, data: data } : response;
       return response;
     }
   }
 
   async remove(id: number) {
     let data: Admin = null;
-    let messages: string[] = [];
-    let status: string = '';
+    let response: Iresponse = null;
     try {
       data = await this.dbService.admin.delete({
         where: {
           id: id,
         },
       });
-      messages.push('Admin record successfully deleted');
-      status = 'success';
+      response = await this.manageResponse(
+        'success',
+        'Admin record successfully deleted',
+        data,
+      );
     } catch (error) {
-      messages.push(`Admin record cannot be deleted or found.`);
-      status = 'failed';
+      response = await this.manageResponse(
+        'failed',
+        'Admin record cannot be deleted or found',
+      );
     } finally {
-      // Following common standard for API response.
-      let response: Iresponse = {
-        status: status,
-        messages: messages,
-      };
       return response;
     }
+  }
+
+  async manageResponse(status: string, message: string, data?: any) {
+    // Following common standard for API response.
+    let messages: string[] = [];
+    let response: Iresponse = null;
+    messages.push(message);
+    response = {
+      status: status,
+      messages: messages,
+    };
+    return data ? { ...response, data: data } : response;
   }
 }

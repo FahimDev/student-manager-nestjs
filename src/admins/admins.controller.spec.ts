@@ -8,7 +8,7 @@ import { UpdateAdminDto } from './dto/update-admin.dto';
 
 describe('AdminsController', () => {
   let controller: AdminsController;
-  let adminId:number;
+  let adminId: number;
   let adminInfo: CreateAdminDto;
 
   beforeEach(async () => {
@@ -25,35 +25,37 @@ describe('AdminsController', () => {
   });
 
   //https://fakerjs.dev/guide/
-    it('should create new admin', async () => {
-      const newAdmin = {
-        name: faker.name.fullName(),
-        email: faker.internet.email(),
-        phone: faker.random.numeric(11),
-        username: String(faker.internet.userName()),
-        password: faker.internet.password(),
-        role: 'ADMIN',
-        designation: faker.name.jobArea(),
-      } as CreateAdminDto;
-      const response = await controller.create(newAdmin);
-      expect(response.status).toEqual('success');
-      expect(response.data).toBeDefined();
-      adminId = response.data['id'];
-      adminInfo = newAdmin;
-    });
+  it('should create new admin', async () => {
+    const newAdmin = {
+      name: faker.name.fullName(),
+      email: faker.internet.email(),
+      phone: faker.random.numeric(11),
+      username: String(faker.internet.userName()),
+      password: faker.internet.password(),
+      role: 'ADMIN',
+      designation: faker.name.jobArea(),
+    } as CreateAdminDto;
+    const response = await controller.create(newAdmin);
+    expect(response.status).toEqual('success');
+    expect(response.data).toBeDefined();
+    adminId = response.data['id'];
+    adminInfo = newAdmin;
+  });
 
-    it('should find all admins', async () => {
-      const response = await controller.findAll();
-      expect(response).toBeDefined();
-      expect(response.length).toBeGreaterThan(0);
-    });
+  it('should find all admins', async () => {
+    const response = await controller.findAll();
+    expect(response).toBeDefined();
+    expect(response.status).toEqual('success');
+  });
 
-    it('should find the recently created admin', async () => {
-      const response = await controller.findOne(String(adminId));
-      expect(response).toBeDefined();
-    });
+  it('should find the recently created admin', async () => {
+    const response = await controller.findOne(String(adminId));
+    expect(response.data).toBeDefined();
+    expect(response.status).toEqual('success');
+    expect(response.data['name']).toEqual(adminInfo.name);
 
-    
+  });
+
   it('should update the recently created admin info', async () => {
     const updateStudent = {
       name: faker.name.fullName(),
@@ -72,7 +74,6 @@ describe('AdminsController', () => {
     adminInfo.name = updateStudent.name;
     adminInfo.phone = updateStudent.phone;
     adminInfo.designation = updateStudent.designation;
-
   });
 
   it('should delete recently updated admin', async () => {
@@ -84,5 +85,4 @@ describe('AdminsController', () => {
     --------------------END---------------------
     `);
   });
-
 });

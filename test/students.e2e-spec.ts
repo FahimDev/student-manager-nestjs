@@ -1,5 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { response } from 'express';
 import * as request from 'supertest';
 import { DBService } from '../src/database/db.service';
 import { StudentsModule } from '../src/students/students.module';
@@ -51,8 +52,7 @@ describe('StudentsController (e2e)', () => {
       .get('/students/1')
       .expect(200)
       .expect((res) => {
-        expect(res.body.status).toEqual('success');
-        expect(res.body.data.name).toEqual('Student 1');
+        expect(res.body.name).toEqual('Student 1');
       });
   });
 

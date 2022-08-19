@@ -54,18 +54,19 @@ describe('StudentsController', () => {
   });
 
   it('should update student', async () => {
-    const updateStudent = {
+    const updatedStudent = {
       name: faker.name.fullName(),
       phone: faker.phone.number(),
       address: faker.address.city(),
       email: faker.internet.email(),
     } as UpdateStudentDto;
+
     const response = await controller.update(
       mockStudentId.toString(),
-      updateStudent,
+      updatedStudent,
     );
     expect(response.status).toEqual('success');
-    expect((response.data as Student).name).toEqual(updateStudent.name);
+    expect((response.data as Student).name).toEqual(updatedStudent.name);
   });
 
   it('should delete student', async () => {

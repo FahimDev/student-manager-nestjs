@@ -1,14 +1,26 @@
-import { INestApplication } from '@nestjs/common';
+import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { response } from 'express';
 import * as request from 'supertest';
 import { DBService } from '../src/database/db.service';
 import { StudentsModule } from '../src/students/students.module';
 import { StudentsService } from '../src/students/students.service';
+import { CreateStudentDto } from '../src/students/dto/create-student.dto';
+import { UpdateStudentDto } from '../src/students/dto/update-student.dto';
+import { faker } from '@faker-js/faker';
+import { Student } from '@prisma/client';
 
 describe('StudentsController (e2e)', () => {
   let app: INestApplication;
   let server;
+
+  let mockStudentId: number;
+  const mockStudent = {
+    name: faker.name.fullName(),
+    phone: faker.phone.number(),
+    address: faker.address.streetAddress(),
+    email: faker.internet.email(),
+    program_id: 1,
+  } as CreateStudentDto;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -22,63 +34,66 @@ describe('StudentsController (e2e)', () => {
   });
 
   it('/students (POST)', async () => {
-    const newStudent = {
-      name: 'newStudent',
-      phone: '0123',
-      address: '123',
-      email: 'newStudent@mail.com',
-      program_id: 1,
-    };
-
     return server
       .post('/students')
-      .send(newStudent)
-      .expect(201)
-      .expect((res) => {
-        expect(res.body.status).toEqual('success');
-        expect(res.body.data).toEqual({
+      .send(mockStudent)
+      .expect(HttpStatus.CREATED)
+      .expect(({ body: { status, data } }) => {
+        expect(status).toEqual('success');
+        expect(data).toEqual({
           id: expect.any(Number),
-          ...newStudent,
+          ...mockStudent,
         });
+
+        mockStudentId = data.id;
       });
   });
 
   it('/students (GET)', async () => {
-    return server.get('/students').expect(200);
+    return server
+      .get('/students')
+      .expect(HttpStatus.OK)
+      .expect(({ body: { status, data } }) => {
+        expect(status).toEqual('success');
+        expect(Array.isArray(data)).toBe(true);
+        expect((data as Student[]).length).toBeGreaterThan(0);
+      });
   });
 
   it('/students/:id (GET)', async () => {
     return server
-      .get('/students/1')
-      .expect(200)
+      .get(`/students/${mockStudentId}`)
+      .expect(HttpStatus.OK)
       .expect((res) => {
-        expect(res.body.name).toEqual('Student 1');
+        expect(res).toBeDefined();
+        expect((res.body.data as Student).name).toEqual(mockStudent.name);
       });
   });
 
   it('/students/:id (PATCH)', async () => {
-    const updateStudent = {
-      name: 'updatedStudent',
-      phone: '0123',
-      address: '123',
-      email: 'updatedStudent@mail.com',
-    };
+    const updatedStudent = {
+      name: faker.name.fullName(),
+      phone: faker.phone.number(),
+      address: faker.address.city(),
+      email: faker.internet.email(),
+    } as UpdateStudentDto;
 
     return server
-      .patch('/students/1')
-      .send(updateStudent)
-      .expect(200)
-      .expect((res) => {
-        expect(res.body.status).toEqual('success');
+      .patch(`/students/${mockStudentId}`)
+      .send(updatedStudent)
+      .expect(HttpStatus.OK)
+      .expect(({ body: { status, data } }) => {
+        expect(status).toEqual('success');
+        expect((data as Student).name).toEqual(updatedStudent.name);
       });
   });
 
   it('/students/:id (DELETE)', async () => {
     return server
-      .delete('/students/1')
-      .expect(200)
-      .expect((res) => {
-        expect(res.body.status).toEqual('success');
+      .delete(`/students/${mockStudentId}`)
+      .expect(HttpStatus.OK)
+      .expect(({ body: { status } }) => {
+        expect(status).toEqual('success');
       });
   });
 });

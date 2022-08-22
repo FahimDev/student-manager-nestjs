@@ -4,10 +4,12 @@ import { CreateProgramDto } from './dto/create-program.dto';
 import { UpdateProgramDto } from './dto/update-program.dto';
 import { ProgramsController } from './programs.controller';
 import { ProgramsService } from './programs.service';
+import { faker } from '@faker-js/faker';
 
 describe('ProgramsController', () => {
   let controller: ProgramsController;
   let programID: any;
+  let programTitle: string;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -23,14 +25,20 @@ describe('ProgramsController', () => {
   });
 
   it('should create new program', async () => {
+    const programInfo = [
+      { title: 'Arts', type: 'ARTS' },
+      { title: 'Commerce', type: 'COMMERCE' },
+    ];
+    const randomNum = Math.floor(Math.random() * 2);
     const newProgram = {
-      title: 'Arts',
-      description: 'text',
-      type: 'ARTS',
+      title: programInfo[randomNum].title,
+      description: faker.random.words(5),
+      type: programInfo[randomNum].type,
     } as CreateProgramDto;
 
     const response: any = await controller.create(newProgram);
     programID = response.data.id;
+    programTitle = response.data.title
 
     expect(response.status).toEqual('success');
     expect(response.data).toBeDefined();
@@ -46,7 +54,7 @@ describe('ProgramsController', () => {
   it('should find one program', async () => {
     const response: any = await controller.findOne(programID);
     expect(response.status).toEqual('success');
-    expect(response.data.title).toEqual('Arts');
+    expect(response.data.title).toEqual(programTitle);
   });
 
   it('should find all the students of the program', async () => {
@@ -56,7 +64,7 @@ describe('ProgramsController', () => {
 
   it('should update program', async () => {
     const updateProgram = {
-      description: 'new text',
+      description: faker.random.words(5),
     } as UpdateProgramDto;
     const response = await controller.update(programID, updateProgram);
     expect(response.status).toEqual('success');

@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Program, Student } from '@prisma/client';
-import { response } from 'express';
+import { Program } from '@prisma/client';
 import { DBService } from '../database/db.service';
 import { CreateProgramDto } from './dto/create-program.dto';
 import { UpdateProgramDto } from './dto/update-program.dto';
@@ -24,25 +23,16 @@ export class ProgramsService {
       messages.push('Program record cannot be created');
       status = 'failed';
     } finally {
-      let response: Iresponse = {
-        status: status,
-        messages: messages,
-      };
-
-      response = data ? { ...response, data: data } : response;
-
-      return response;
+      return this.manageResponse(status, messages, data);
     }
   }
 
   async findAll() {
-    let programs = await this.dbService.program.findMany();
-    let response: Iresponse = {
-      status: 'success',
-      messages: ['Program record(s) successfully found'],
-      data: programs,
-    };
-    return response;
+    let data = await this.dbService.program.findMany();
+    let status = 'success';
+    let  messages: ['Program record(s) successfully found'];
+
+    return this.manageResponse(status, messages, data);
   }
 
   async findOne(id: number) {
@@ -60,18 +50,10 @@ export class ProgramsService {
       messages.push("Requested student's record successfully found");
       status = 'success';
     } catch (error) {
-
       messages.push("Requested program's record cannot be found");
       status = 'failed';
     } finally {
-
-      let response: Iresponse = {
-        status: status,
-        messages: messages,
-      };
-
-      response = data ? { ...response, data: data } : response;
-      return response;
+      return this.manageResponse(status, messages, data);
     }
   }
 
@@ -93,14 +75,7 @@ export class ProgramsService {
       messages.push('Program record cannot be updated or found');
       status = 'failed';
     } finally {
-      let response: Iresponse = {
-        status: status,
-        messages: messages,
-      };
-
-      response = data ? { ...response, data: data } : response;
-
-      return response;
+      return this.manageResponse(status, messages, data);
     }
   }
 
@@ -120,12 +95,7 @@ export class ProgramsService {
       messages.push('Program record cannot be deleted or found');
       status = 'failed';
     } finally {
-      let response: Iresponse = {
-        status: status,
-        messages: messages,
-      };
-
-      return response;
+      return this.manageResponse(status, messages);
     }
   }
 
@@ -140,14 +110,18 @@ export class ProgramsService {
     });
 
     status = 'success';
-    messages.push('Program\'s student record(s) successfully found')
+    messages.push("Program's student record(s) successfully found");
 
-    let response: Iresponse = {
+    return this.manageResponse(status, messages, data);
+  }
+
+  manageResponse(status: string, messages: string[], data?: any) {
+    // Following common standard for API response.
+    let response: Iresponse = null;
+    response = {
       status: status,
       messages: messages,
-      data: data
     };
-
-    return response;
+    return data ? { ...response, data: data } : response;
   }
 }

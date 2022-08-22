@@ -21,7 +21,8 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "prisma:migrate": "prisma migrate dev",
     "compose:dev": "docker-compose up --build",
-    "compose:prod": "docker-compose -f ./docker-compose-prod.yaml up"
+    "compose:prod": "docker-compose -f ./docker-compose-prod.yaml up",
+    "compose:test": "docker-compose -f ./docker-compose-test.yaml up --build"
   },
   "dependencies": {
     "@nestjs/common": "^9.0.0",
@@ -43,6 +44,7 @@
     "swagger-ui-express": "4.5.0"
   },
   "devDependencies": {
+    "@faker-js/faker": "^7.4.0",
     "@nestjs/cli": "^9.0.0",
     "@nestjs/schematics": "^9.0.0",
     "@nestjs/testing": "^9.0.0",

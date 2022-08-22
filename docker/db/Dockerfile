@@ -3,7 +3,6 @@ FROM mysql
 
 ENV MYSQL_ROOT_PASSWORD='root'
 ENV MYSQL_DATABASE='student_manager_db'
-ENV MYSQL_USER='root'
 ENV MYSQL_PASSWORD='root'
 
 EXPOSE 3306

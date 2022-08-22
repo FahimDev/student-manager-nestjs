@@ -18,10 +18,15 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "prisma:migrate": "prisma migrate dev",
+    "compose:dev": "docker-compose up --build",
+    "compose:prod": "docker-compose -f ./docker-compose-prod.yaml up",
+    "compose:test": "docker-compose -f ./docker-compose-test.yaml up --build"
   },
   "dependencies": {
     "@nestjs/common": "^9.0.0",
+    "@nestjs/config": "^2.2.0",
     "@nestjs/core": "^9.0.0",
     "@nestjs/jwt": "^9.0.0",
     "@nestjs/passport": "^9.0.0",
@@ -39,6 +44,7 @@
     "swagger-ui-express": "4.5.0"
   },
   "devDependencies": {
+    "@faker-js/faker": "^7.4.0",
     "@nestjs/cli": "^9.0.0",
     "@nestjs/schematics": "^9.0.0",
     "@nestjs/testing": "^9.0.0",

@@ -2,20 +2,12 @@ version: '3.9'
 
 volumes:
   student_manager_db_volume:
-  student_manager_node_volume:
 
 services:
-  web-dev:
+  web:
     build:
       context: .
-      dockerfile: docker/web/Dockerfile
-    volumes:
-      - type: bind
-        source: "."
-        target: /usr/app
-      - type: volume
-        source: student_manager_node_volume
-        target: /usr/app/node_modules
+      dockerfile: docker/web/Dockerfile-Prod
     ports:
       - '3000:3000'
     depends_on:

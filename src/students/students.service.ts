@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Student } from '@prisma/client';
-import { DBService } from 'src/database/db.service';
+import { DBService } from '../database/db.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
 
@@ -11,7 +11,7 @@ export class StudentsService {
   async create(createStudentDto: CreateStudentDto) {
     let data: Student = null;
     const messages: string[] = [];
-    let status: string = "";
+    let status: string = '';
 
     try {
       data = await this.dbService.student.create({
@@ -34,8 +34,21 @@ export class StudentsService {
     }
   }
 
-  findAll() {
-    return this.dbService.student.findMany();
+  async manageResponse(status: string, message: string, data?: any) {
+    // Following common standard for API response.
+    let messages: string[] = [];
+    let response: Iresponse = null;
+    messages.push(message);
+    response = {
+      status: status,
+      messages: messages,
+    };
+    return data ? { ...response, data: data } : response;
+  }
+
+  async findAll() {
+    const data = await this.dbService.student.findMany();
+    return await this.manageResponse('success', 'unit test', data);
   }
 
   findOne(id: number) {
@@ -49,7 +62,7 @@ export class StudentsService {
   async update(id: number, updateStudentDto: UpdateStudentDto) {
     let data: Student = null;
     let messages: string[] = [];
-    let status: string = "";
+    let status: string = '';
 
     try {
       data = await this.dbService.student.update({
@@ -78,7 +91,7 @@ export class StudentsService {
   async remove(id: number) {
     let data: Student = null;
     let messages: string[] = [];
-    let status: string = "";
+    let status: string = '';
 
     try {
       data = await this.dbService.student.delete({

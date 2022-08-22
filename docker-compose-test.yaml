@@ -5,10 +5,10 @@ volumes:
   student_manager_node_volume:
 
 services:
-  web-dev:
+  web-test:
     build:
       context: .
-      dockerfile: docker/web/Dockerfile
+      dockerfile: docker/web/Dockerfile-Test
     volumes:
       - type: bind
         source: "."
@@ -16,8 +16,6 @@ services:
       - type: volume
         source: student_manager_node_volume
         target: /usr/app/node_modules
-    ports:
-      - '3000:3000'
     depends_on:
       - db
   db:

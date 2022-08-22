@@ -1,0 +1,28 @@
+version: '3.9'
+
+volumes:
+  student_manager_db_volume:
+  student_manager_node_volume:
+
+services:
+  web-test:
+    build:
+      context: .
+      dockerfile: docker/web/Dockerfile-Test
+    volumes:
+      - type: bind
+        source: "."
+        target: /usr/app
+      - type: volume
+        source: student_manager_node_volume
+        target: /usr/app/node_modules
+    depends_on:
+      - db
+  db:
+    build:
+      context: .
+      dockerfile: docker/db/Dockerfile
+    ports:
+      - '3306:3306'
+    volumes:
+      - student_manager_db_volume:/var/lib/mysql

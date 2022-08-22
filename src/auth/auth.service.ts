@@ -29,8 +29,8 @@ export class AuthService {
     if (userInfo) {
       data = { username: userInfo.username, role: userInfo.role };
       response = await this.manageResponse(
-        'Login Successful!',
         'success',
+        'Login Successful!',
         data,
       );
     } else {

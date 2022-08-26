@@ -3,4 +3,4 @@ FROM node:16-alpine
 # Create app directory
 WORKDIR /usr/app
 
-CMD ["sh", "-c", "yarn install; yarn prisma:migrate; yarn prisma:seed; yarn test students"]
+CMD ["sh", "-c", "yarn install; yarn prisma:migrate; yarn prisma:seed; yarn test"]

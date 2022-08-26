@@ -33,19 +33,19 @@ export class UsersService {
       data = await this.authenticateUser(user, updateUserDto);
       if (data) {
         response = await this.manageResponse(
-          'User password updated successfully!',
           'success',
+          'User password updated successfully!',
         );
       } else {
         response = await this.manageResponse(
-          'Sorry, curent password is wrong!',
           'failed',
+          'Sorry, curent password is wrong!',
         );
       }
     } catch (error) {
       response = await this.manageResponse(
-        'Password was not updated!',
         'failed',
+        'Password was not updated!',
       );
     } finally {
       return response;

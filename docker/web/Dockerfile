@@ -5,4 +5,4 @@ WORKDIR /usr/app
 
 EXPOSE 3000
 
-CMD ["sh", "-c", "yarn install; yarn prisma:migrate; yarn start:dev;"]
+CMD ["sh", "-c", "yarn install; yarn prisma:migrate; yarn prisma:seed; yarn start:dev"]

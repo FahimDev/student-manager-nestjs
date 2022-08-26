@@ -9,60 +9,72 @@ export class StudentsService {
   constructor(private dbService: DBService) {}
 
   async create(createStudentDto: CreateStudentDto) {
+    let response: Iresponse;
     let data: Student = null;
-    const messages: string[] = [];
-    let status: string = '';
 
     try {
       data = await this.dbService.student.create({
         data: createStudentDto,
       });
-      messages.push('Student record successfully created');
-      status = 'success';
+      response = this.manageResponse(
+        'success',
+        'Student record successfully created',
+        data,
+      );
     } catch (error) {
-      messages.push('Student record cannot be created');
-      status = 'failed';
+      response = this.manageResponse(
+        'failed',
+        'Student record cannot be created',
+      );
     } finally {
-      let response: Iresponse = {
-        status: status,
-        messages: messages,
-      };
-
-      response = data ? { ...response, data: data } : response;
-
       return response;
     }
   }
 
-  async manageResponse(status: string, message: string, data?: any) {
-    // Following common standard for API response.
-    let messages: string[] = [];
-    let response: Iresponse = null;
-    messages.push(message);
-    response = {
-      status: status,
-      messages: messages,
-    };
-    return data ? { ...response, data: data } : response;
-  }
-
   async findAll() {
+    let response: Iresponse;
     const data = await this.dbService.student.findMany();
-    return await this.manageResponse('success', 'unit test', data);
+
+    if (data) {
+      response = await this.manageResponse(
+        'success',
+        'Student record(s) successfully found',
+        data,
+      );
+    } else {
+      response = await this.manageResponse('failed', 'Empty student record!');
+    }
+
+    return response;
   }
 
-  findOne(id: number) {
-    return this.dbService.student.findFirst({
+  async findOne(id: number) {
+    let response: Iresponse;
+    const data = await this.dbService.student.findFirst({
       where: {
         id: id,
       },
     });
+
+    if (data) {
+      response = await this.manageResponse(
+        'success',
+        "Requested student's record successfully found",
+        data,
+      );
+    } else {
+      response = await this.manageResponse(
+        'failed',
+        "Requested student's record not found",
+      );
+    }
+
+    return response;
   }
 
   async update(id: number, updateStudentDto: UpdateStudentDto) {
+    let response: Iresponse;
     let data: Student = null;
-    let messages: string[] = [];
-    let status: string = '';
 
     try {
       data = await this.dbService.student.update({
@@ -71,27 +83,24 @@ export class StudentsService {
         },
         data: updateStudentDto,
       });
-      messages.push('Student record successfully updated');
-      status = 'success';
+      response = this.manageResponse(
+        'success',
+        'Student record successfully updated',
+        data,
+      );
     } catch (error) {
-      messages.push('Student record cannot be updated or found');
-      status = 'failed';
+      response = this.manageResponse(
+        'failed',
+        'Student record cannot be updated or found',
+      );
     } finally {
-      let response: Iresponse = {
-        status: status,
-        messages: messages,
-      };
-
-      response = data ? { ...response, data: data } : response;
-
       return response;
     }
   }
 
   async remove(id: number) {
+    let response: Iresponse;
     let data: Student = null;
-    let messages: string[] = [];
-    let status: string = '';
 
     try {
       data = await this.dbService.student.delete({
@@ -99,18 +108,31 @@ export class StudentsService {
           id: id,
         },
       });
-      messages.push('Student record successfully deleted');
-      status = 'success';
+      response = this.manageResponse(
+        'success',
+        'Student record successfully deleted',
+        data,
+      );
     } catch (error) {
-      messages.push('Student record cannot be deleted or found');
-      status = 'failed';
+      response = this.manageResponse(
+        'failed',
+        'Student record cannot be deleted',
+      );
     } finally {
-      let response: Iresponse = {
-        status: status,
-        messages: messages,
-      };
-
       return response;
     }
+  }
+
+  manageResponse(status: string, message: string, data?: any): Iresponse {
+    // Following common standard for API response.
+    const messages: string[] = [];
+    let response: Iresponse = null;
+    messages.push(message);
+    response = {
+      status: status,
+      messages: messages,
+    };
+
+    return data ? { ...response, data: data } : response;
   }
 }

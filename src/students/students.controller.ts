@@ -6,9 +6,6 @@ import {
   Patch,
   Param,
   Delete,
-  Req,
-  Res,
-  UseGuards,
 } from '@nestjs/common';
 import { StudentsService } from './students.service';
 import { CreateStudentDto } from './dto/create-student.dto';
@@ -16,11 +13,10 @@ import { UpdateStudentDto } from './dto/update-student.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { Request, Response } from 'express';
 @ApiTags('Students')
 @Controller({
   path: 'students',
-  version: '1'
+  version: '1',
 })
 export class StudentsController {
   constructor(private readonly studentsService: StudentsService) {}
@@ -31,9 +27,8 @@ export class StudentsController {
   }
 
   @Get()
-  async findAll(@Req() request: Request, @Res() response: Response) {
-    const data = await this.studentsService.findAll();
-    response.status(200).send(data);
+  findAll() {
+    return this.studentsService.findAll();
   }
 
   @Get(':id')

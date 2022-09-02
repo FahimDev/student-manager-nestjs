@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ProgramsService } from './programs.service';
 import { ProgramsController } from './programs.controller';
-import { DBService } from 'src/database/db.service';
+import { DBService } from '../database/db.service';
 
 @Module({
   controllers: [ProgramsController],
